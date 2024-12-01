@@ -11,7 +11,8 @@ namespace UnityExplorer.Inspectors
     public enum MouseInspectMode
     {
         World,
-        UI
+        UI,
+        World2D
     }
 
     public class MouseInspector : PanelBase
@@ -19,6 +20,7 @@ namespace UnityExplorer.Inspectors
         public static MouseInspector Instance { get; private set; }
 
         private readonly WorldInspector worldInspector;
+        private readonly World2DInspector world2DInspector;
         private readonly UiInspector uiInspector;
 
         public static bool Inspecting { get; set; }
@@ -28,6 +30,7 @@ namespace UnityExplorer.Inspectors
         {
             MouseInspectMode.UI => uiInspector,
             MouseInspectMode.World => worldInspector,
+            MouseInspectMode.World2D => world2DInspector,
             _ => null,
         };
 
@@ -53,6 +56,7 @@ namespace UnityExplorer.Inspectors
         {
             Instance = this;
             worldInspector = new WorldInspector();
+            world2DInspector = new World2DInspector();
             uiInspector = new UiInspector();
         }
 
@@ -63,6 +67,7 @@ namespace UnityExplorer.Inspectors
                 case 0: return;
                 case 1: Instance.StartInspect(MouseInspectMode.World); break;
                 case 2: Instance.StartInspect(MouseInspectMode.UI); break;
+                case 3: Instance.StartInspect(MouseInspectMode.World2D); break;
             }
             InspectorPanel.Instance.MouseInspectDropdown.value = 0;
         }
