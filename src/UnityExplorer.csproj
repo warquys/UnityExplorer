@@ -13,7 +13,7 @@
     <RootNamespace>UnityExplorer</RootNamespace>
     <!-- MSBuildの.NET8対応に伴って勝手にバージョンにハッシュ値入れられてBepInExのロード不具合が出たため、明示的に無効化しておく -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <Configurations>BIE_Cpp;BIE_Cpp_CoreCLR;BIE_Unity_Cpp_CoreCLR;BIE5_Mono;BIE6_Mono;BIE6_Unity_Mono;ML_Cpp_net6;ML_Cpp_CoreCLR;ML_Cpp_net472;ML_Mono;STANDALONE_Mono;STANDALONE_Cpp;STANDALONE_Cpp_CoreCLR</Configurations>
+    <Configurations>BIE_Cpp;BIE_Cpp_CoreCLR;BIE_Unity_Cpp_CoreCLR;BIE5_Mono;BIE6_Mono;BIE6_Unity_Mono;ML_Cpp_net6;ML_Cpp_CoreCLR;ML_Cpp_net472;ML_Mono;STANDALONE_Mono;STANDALONE_Cpp;STANDALONE_Cpp_CoreCLR;NR_Mono</Configurations>
   </PropertyGroup>
 
 
@@ -27,7 +27,7 @@
     <ItemGroup Condition="'$(Configuration)'=='ML_Cpp_CoreCLR'">
       <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_IL2CPP_Interop_ML" />
     </ItemGroup>
-    <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
+    <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono' or '$(Configuration)'=='NR_Mono'">
       <Exec Command="dotnet build ..\UniverseLib\src\UniverseLib.sln -c Release_Mono" />
     </ItemGroup>
   </Target>
@@ -128,15 +128,30 @@
     <DefineConstants>CPP,STANDALONE,INTEROP</DefineConstants>
     <AssemblyName>UnityExplorer.STANDALONE.IL2CPP.CoreCLR</AssemblyName>
   </PropertyGroup>
-
+  <!-- NEURON MONO-->
+  <PropertyGroup Condition="'$(Configuration)'=='NR_Mono'">
+	<TargetFramework>netstandard2.0</TargetFramework>
+	<OutputPath>..\Release\UnityExplorer.Neuron.Mono.CoreCLR\</OutputPath>
+	<DefineConstants>MONO,NR</DefineConstants>
+    <AssemblyName>UnityExplorer.NR.Mono</AssemblyName>
+  </PropertyGroup>
+	
   <!-- ~~~~~ NUGET ~~~~~ -->
   <ItemGroup>
-    <PackageReference Include="HarmonyX" Version="2.5.2" IncludeAssets="compile" />
     <PackageReference Include="Samboy063.Tomlet" Version="3.1.3" />
     <PackageReference Include="Microsoft.Unity.Analyzers" Version="1.19.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <!-- Harmony -->
+  <ItemGroup Condition="'$(Configuration)'=='NR_Mono'">
+	<PackageReference Include="Lib.Harmony" Version="2.3.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'!='NR_Mono'">
+    <PackageReference Include="HarmonyX" Version="2.5.2" IncludeAssets="compile" />
   </ItemGroup>
 
   <!-- il2cpp Unhollower nuget -->
@@ -171,7 +186,7 @@
   </ItemGroup>
 
   <!-- mono nuget -->
-  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
+  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono' or '$(Configuration)'=='NR_Mono'">
     <Reference Include="UniverseLib">
       <HintPath>..\UniverseLib\Release\UniverseLib.Mono\UniverseLib.Mono.dll</HintPath>
       <Private>True</Private>
@@ -186,8 +201,8 @@
       <Private>True</Private>
     </Reference>
   </ItemGroup>
-  <!-- net35 / net472 -->
-  <ItemGroup Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net472'">
+  <!-- netstandard2 / net35 / net472 -->
+  <ItemGroup Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net472' or '$(TargetFramework)'=='netstandard2.0'">
     <Reference Include="mcs">
       <HintPath>..\lib\net35\mcs.dll</HintPath>
       <Private>True</Private>
@@ -258,7 +273,14 @@
     </Reference>
   </ItemGroup>
   <!-- Mono -->
-  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono'">
+  <ItemGroup Condition="'$(Configuration)'=='NR_Mono'">
+  	<Reference Include="Neuron.Core">
+	  <HintPath>..\lib\netstandard2\Neuron\Neuron.Core.dll</HintPath>
+	  <Private>False</Private>
+  	</Reference>
+  </ItemGroup>
+  <!-- Mono -->
+  <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono' or '$(Configuration)'=='BIE6_Unity_Mono' or '$(Configuration)'=='BIE5_Mono' or '$(Configuration)'=='ML_Mono' or '$(Configuration)'=='STANDALONE_Mono' or '$(Configuration)'=='NR_Mono'">
     <Reference Include="UnityEngine">
       <HintPath>..\lib\net35\UnityEngine.dll</HintPath>
       <Private>False</Private>
