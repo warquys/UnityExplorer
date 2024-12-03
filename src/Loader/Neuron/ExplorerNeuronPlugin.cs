@@ -13,7 +13,7 @@ namespace UnityExplorer.Loader.Neuron
         Repository = "https://github.com/yukieiji/UnityExplorer/",
         Website = "https://github.com/yukieiji/UnityExplorer/"
     )]
-    public class NeuronPlugin : Plugin, IExplorerLoader
+    public class ExplorerNeuronPlugin : Plugin, IExplorerLoader
     {
         private readonly NeuronBase _neuronBase;
         private readonly StandaloneConfigHandler _configHandler;
@@ -30,7 +30,7 @@ namespace UnityExplorer.Loader.Neuron
 
         public Action<object> OnLogError => Logger.Error;
 
-        public NeuronPlugin()
+        public ExplorerNeuronPlugin()
         {
             _neuronBase = Globals.Get<NeuronBase>();
             _configHandler = new StandaloneConfigHandler();
